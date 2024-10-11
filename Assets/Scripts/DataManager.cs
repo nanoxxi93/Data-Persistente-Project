@@ -55,7 +55,6 @@ public class DataManager : MonoBehaviour
 
     public void Save(int score)
     {
-        Debug.Log(score);
         // Update Instance data
         if (score >= bestScore)
         {

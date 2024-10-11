@@ -7,29 +7,48 @@ public class Paddle : MonoBehaviour
     public float Speed = 2.0f;
     public float MaxMovement = 2.0f;
     private float mouseXLimit = 1.9f;
-    
+    private Vector2 lastMousePosition;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        float input = Input.GetAxis("Horizontal");
+
+        if (input != 0)
+        {
+            Vector3 pos = transform.position;
+            pos.x += input * Speed * Time.deltaTime;
+
+            if (pos.x > MaxMovement)
+                pos.x = MaxMovement;
+            else if (pos.x < -MaxMovement)
+                pos.x = -MaxMovement;
+
+            transform.position = pos;
+        }
         if (Input.mousePresent)
         {
             Vector2 mousePosition = Input.mousePosition;
-            Vector2 worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-            if (worldPosition.x < -mouseXLimit)
+            if (lastMousePosition != mousePosition)
             {
-                worldPosition.x = -mouseXLimit;
+                lastMousePosition = mousePosition;
+                Vector2 worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+                if (worldPosition.x < -mouseXLimit)
+                {
+                    worldPosition.x = -mouseXLimit;
+                }
+                if (worldPosition.x > mouseXLimit)
+                {
+                    worldPosition.x = mouseXLimit;
+                }
+                transform.position = new Vector2(worldPosition.x, transform.position.y);
             }
-            if (worldPosition.x > mouseXLimit)
-            {
-                worldPosition.x = mouseXLimit;
-            }
-            transform.position = new Vector2(worldPosition.x, transform.position.y);
         }
         else if (Input.touchCount > 0)
         {
@@ -44,20 +63,6 @@ public class Paddle : MonoBehaviour
                 worldPosition.x = mouseXLimit;
             }
             transform.position = new Vector2(worldPosition.x, transform.position.y);
-        }
-        else
-        {
-            float input = Input.GetAxis("Horizontal");
-
-            Vector3 pos = transform.position;
-            pos.x += input * Speed * Time.deltaTime;
-
-            if (pos.x > MaxMovement)
-                pos.x = MaxMovement;
-            else if (pos.x < -MaxMovement)
-                pos.x = -MaxMovement;
-
-            transform.position = pos;
         }
     }
 }
